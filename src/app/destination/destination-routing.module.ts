@@ -5,9 +5,29 @@ import { DestinationPage } from './destination.page';
 
 const routes: Routes = [
   {
+    path: 'tabs',
+    component: DestinationPage,
+    children: [
+      {
+        path: 'explore',
+        loadChildren: () => import('./explore/explore.module').then( m => m.ExplorePageModule)
+      },
+      {
+        path: 'saved',
+        loadChildren: () => import('./saved/saved.module').then( m => m.SavedPageModule)
+      },
+      {
+        path: '',
+        redirectTo: '/destination/tabs/explore',
+        pathMatch: 'full'
+      },
+    ]
+  },
+  {
     path: '',
-    component: DestinationPage
-  }
+    redirectTo: '/destination/tabs/explore',
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({
