@@ -7,7 +7,12 @@ const routes: Routes = [
   {
     path: '',
     component: ExplorePage
+  },
+  {
+    path: ':destId',
+    loadChildren: () => import('./destination-details/destination-details.module').then( m => m.DestinationDetailsPageModule)
   }
+
 ];
 
 @NgModule({

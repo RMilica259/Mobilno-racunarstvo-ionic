@@ -1,4 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DestinationModel } from '../destination.model';
+import { DestinationService } from '../destination';
 
 @Component({
   selector: 'app-explore',
@@ -8,8 +10,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 })
 export class ExplorePage implements OnInit, OnDestroy {
 
-  constructor() { 
+  destination: DestinationModel[];
+
+  constructor(private destinationService: DestinationService) { 
     console.log('constructor');
+    this.destination = this.destinationService.destination;
   }
 
   ngOnInit() {

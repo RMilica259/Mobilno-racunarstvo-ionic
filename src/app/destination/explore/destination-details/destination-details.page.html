@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/destination/tabs/explore"></ion-back-button>
+    </ion-buttons>
+    <ion-title>destination-details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="ion-padding">
+    <img [src]="dest.imageUrl">
+    <ion-card-header>
+      <ion-card-title>{{dest.name}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      {{dest.description}}
+    </ion-card-content>
+  </ion-card>
+</ion-content>
