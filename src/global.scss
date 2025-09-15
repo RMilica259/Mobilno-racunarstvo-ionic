@@ -34,4 +34,14 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/*@import "@ionic/angular/css/palettes/dark.system.css";*/
+
+ion-toolbar {
+    --background: var(--ion-color-primary);
+    --color: var(--ion-color-primary-contrast);
+}
+
+ion-back-button,
+ion-menu-button {
+  --color: var(--ion-color-primary-contrast);
+}
