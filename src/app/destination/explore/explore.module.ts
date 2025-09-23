@@ -8,6 +8,7 @@ import { ExplorePageRoutingModule } from './explore-routing.module';
 
 import { ExplorePage } from './explore.page';
 import { DestinationElementComponent } from '../destination-element/destination-element.component';
+import { DestinationModalComponent } from '../destination-modal/destination-modal.component';
 
 @NgModule({
   imports: [
@@ -16,6 +17,6 @@ import { DestinationElementComponent } from '../destination-element/destination-
     IonicModule,
     ExplorePageRoutingModule
   ],
-  declarations: [ExplorePage, DestinationElementComponent]
+  declarations: [ExplorePage, DestinationElementComponent, DestinationModalComponent]
 })
 export class ExplorePageModule {}

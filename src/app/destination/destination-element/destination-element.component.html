@@ -1,6 +1,10 @@
 <ion-item>
-  <ion-avatar slot="start">
+  <ion-avatar slot="start" [routerLink]="['/', 'destination', 'tabs', 'explore', dest.id]">
     <ion-img [src]="dest.imageUrl"></ion-img>
   </ion-avatar>
-  <ion-label>{{dest.name}}</ion-label>
+  <ion-label [routerLink]="['/', 'destination', 'tabs', 'explore', dest.id]">
+    <h2>{{ dest.name }}</h2>
+    <p>{{ dest.country }}</p>
+  </ion-label>
+  <ion-icon name="bookmark-outline" slot="end" (click)="openAlert()"></ion-icon>
 </ion-item>

@@ -23,7 +23,11 @@
 
           <ion-item>
             <ion-label color="primary" position="stacked">Password</ion-label>
-            <ion-input type="password" ngModel name="password" required minlength="7"></ion-input>
+            <ion-input type="password" ngModel name="password" required minlength="7" #password="ngModel"></ion-input>
+          </ion-item>
+
+          <ion-item lines="none" *ngIf="password.invalid && password.touched">
+            <ion-label>Should be minimum 7 characters long.</ion-label>
           </ion-item>
 
         </ion-list>

@@ -4,19 +4,18 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Destinations</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-fab-button size="small" (click)="openModal()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <ion-list lines="none">
-    <ion-item *ngFor="let dest of destination" [routerLink]="dest.id" class="destination-item" button>
-      <ion-thumbnail slot="start">
-        <img [src]="dest.imageUrl" alt="{{dest.name}}">
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ dest.name }}</h2>
-        <p>{{ dest.country }}</p>
-      </ion-label>
-    </ion-item>
+    <app-destination-element *ngFor="let dest of destination" [dest]="dest"></app-destination-element>
   </ion-list>
 </ion-content>

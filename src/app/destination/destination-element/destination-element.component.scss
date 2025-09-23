@@ -1,0 +1,28 @@
+ion-item {
+  --min-height: 80px; /* povećava visinu item-a */
+  padding: 10px;
+  border-radius: 12px;
+  margin: 6px 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+ion-avatar {
+  width: 60px;
+  height: 60px;
+  margin-right: 12px;
+}
+
+ion-label h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+ion-label p {
+  font-size: 0.95rem;
+  margin: 4px 0 0 0;
+}
+
+ion-icon {
+  font-size: 1.6rem;
+}
