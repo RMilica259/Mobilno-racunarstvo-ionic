@@ -71,6 +71,6 @@ export class AuthService {
   }
 
   logOut(){
-    this._isUserAuthenticated = false;
+    this._user.next(null);
   }
 }
