@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-log-in',
@@ -11,20 +12,26 @@ import { NgForm } from '@angular/forms';
 })
 export class LogInPage implements OnInit {
 
-  constructor(private authservice: AuthService, private router: Router) { }
+  constructor(private authservice: AuthService, private router: Router, private loadingController: LoadingController) { }
 
   ngOnInit() {
   }
 
   onLogIn(logInForm: NgForm){
-    console.log(logInForm);
-    if(logInForm.valid){
-      this.authservice.logIn(logInForm.value).subscribe(resData => {
-        console.log('Prijava uspesna');
-        console.log(resData);
-        this.router.navigateByUrl('/destination/tabs/explore');
-      });
-    }
+    this.loadingController
+      .create({message: "Log in ..."})
+      .then((loadingEl: HTMLIonLoadingElement) => {
+        loadingEl.present();
+
+      if(logInForm.valid){
+        this.authservice.logIn(logInForm.value).subscribe(resData => {
+          console.log('Prijava uspesna');
+          console.log(resData);
+          loadingEl.dismiss();
+          this.router.navigateByUrl('/destination/tabs/explore');
+        });
+      }
+    });
   }
 
 }
