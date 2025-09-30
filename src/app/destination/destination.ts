@@ -42,20 +42,26 @@ export class DestinationService {
   addDestination(name:string,country:string, description: string){
     let generatedId: string;
     let newDestination: DestinationModel;
+    let fetchedUserId: string;
 
     return this.authService.userId.pipe(take(1), switchMap(userId => {
       if (!userId) {
         throw new Error('No user id found!');
       }
+      fetchedUserId = userId;
+      return this.authService.token;
+    }),  
+    take(1),
+    switchMap((token) => {
       newDestination = new DestinationModel(
         '',
         name,
         country,
         description,
         '',
-        userId
+        fetchedUserId
       );
-      return this.http.post<{name: string}>('https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json', newDestination);
+      return this.http.post<{name: string}>(`https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json?auth=${token}`, newDestination);
     }),
     take(1),
     switchMap((resData) => {
@@ -71,8 +77,13 @@ export class DestinationService {
   }
 
   getDestinations(){
-    return this.http.get<{[key: string]: DestinationData}>('https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json')
-    .pipe(map((destinationData) => {
+
+    return this.authService.token.pipe(
+      take(1),
+      switchMap((token) => {
+        return this.http.get<{[key: string]: DestinationData}>(`https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json?auth=${token}`);
+      }),
+      map((destinationData) => {
       const destinations: DestinationModel[] = [];
 
         for(const key in destinationData){
@@ -82,11 +93,11 @@ export class DestinationService {
           }
         }
         return destinations;
-    }),
-    tap(destinations => {
-      this._destination.next(destinations);
-    })
-  );
+      }),
+      tap(destinations => {
+        this._destination.next(destinations);
+      })
+    )
   }
 
   getDestination(id: string) {
