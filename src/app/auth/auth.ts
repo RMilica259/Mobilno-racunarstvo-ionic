@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
 import { User } from './user.model';
-import { tap } from 'rxjs';
+import { tap, map } from 'rxjs';
 
 interface AuthResponseData {
   kind: string;
@@ -32,8 +32,16 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
     
-  get isUserAuthenticated(): boolean {
-    return this._isUserAuthenticated; 
+  get isUserAuthenticated() {
+    return this._user.asObservable().pipe(
+      map((user) => {
+        if(user) {
+          return ! !user.token;
+        } else {
+          return false;
+        }     
+      })
+    ); 
   }
 
   register(user: UserData){
