@@ -10,7 +10,7 @@ import { AlertController } from '@ionic/angular';
 })
 export class DestinationElementComponent  implements OnInit {
 
-  @Input() dest: DestinationModel = {id: 'd3', name: 'Barcelona', country: 'Spain', description: 'Barcelona is a major cultural, economic, and financial centre in southwestern Europe, as well as the main biotech hub in Spain.', imageUrl: ''};
+  @Input() dest: DestinationModel = {id: 'd3', name: 'Barcelona', country: 'Spain', description: 'Barcelona is a major cultural, economic, and financial centre in southwestern Europe, as well as the main biotech hub in Spain.', imageUrl: '', userId: 'xx'};
 
   constructor(private alertCtrl: AlertController) { }
 

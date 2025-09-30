@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { DestinationModel } from './destination.model';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, switchMap, take, tap } from 'rxjs';
+import { AuthService } from '../auth/auth';
 
 
 export interface DestinationData {
   name: string;
   country: string;
   description: string;
+  imageUrl: string;
+  userId: string;
 }
 
 @Injectable({
@@ -30,7 +33,7 @@ export class DestinationService {
 
   ];
 */
-  constructor(private http: HttpClient){ }
+  constructor(private http: HttpClient, private authService: AuthService){ }
 
   get destination() {
     return this._destination.asObservable();
@@ -38,26 +41,33 @@ export class DestinationService {
 
   addDestination(name:string,country:string, description: string){
     let generatedId: string;
+    let newDestination: DestinationModel;
 
-    return this.http.post<{name: string}>('https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json', {
-      name, 
-      country, 
-      description
-    }).pipe(
-        switchMap((resData) => {
+    return this.authService.userId.pipe(take(1), switchMap(userId => {
+      if (!userId) {
+        throw new Error('No user id found!');
+      }
+      newDestination = new DestinationModel(
+        '',
+        name,
+        country,
+        description,
+        '',
+        userId
+      );
+      return this.http.post<{name: string}>('https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json', newDestination);
+    }),
+    take(1),
+    switchMap((resData) => {
         generatedId = resData.name;
         return this.destination;
-      }), 
-      take(1), 
+      }),
+      take(1),
       tap((destinations: DestinationModel[]) => {
-        this._destination.next(destinations.concat({
-          id: generatedId,
-          name,
-          country,
-          description,
-          imageUrl: ''
-        }));
-    }));
+        newDestination.id = generatedId;
+        this._destination.next(destinations.concat(newDestination));
+      })
+    );
   }
 
   getDestinations(){
@@ -67,13 +77,8 @@ export class DestinationService {
 
         for(const key in destinationData){
           if(destinationData.hasOwnProperty(key)){
-            destinations.push({
-              id: key,
-              name: destinationData[key].name,
-              country: destinationData[key].country,
-              description: destinationData[key].description,
-              imageUrl: 'https://images.pexels.com/photos/532263/pexels-photo-532263.jpeg'
-            });
+            destinations.push(new DestinationModel(key, destinationData[key].name, destinationData[key].country, destinationData[key].description, destinationData[key].userId, destinationData[key].imageUrl)
+              );
           }
         }
         return destinations;
