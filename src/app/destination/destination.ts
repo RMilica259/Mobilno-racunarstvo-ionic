@@ -1,11 +1,21 @@
 import { Injectable } from '@angular/core';
 import { DestinationModel } from './destination.model';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, map, switchMap, take, tap } from 'rxjs';
+
+
+export interface DestinationData {
+  name: string;
+  country: string;
+  description: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class DestinationService {
-  
+  private _destination = new BehaviorSubject<DestinationModel[]>([]);
+  /*
   destination: DestinationModel[] = [
     {id: 'd1', name: 'Rome', country: 'Italy', description: 'It’s easy to see why Rome’s one of the most-visited places on the planet: There’s history everywhere (the Pantheon, the Colosseum, the list goes on), sculptural masterpieces in almost every piazza, and—of course—ridiculously good food. Every trip could feel like a whirlwind, but slow down and you’ll discover lots of surprises. Spend a Sunday morning in Trastevere and hunt for vintage finds at Porta Portese flea market. Or hit San Lorenzo—a student neighborhood with an edgy-but-charming vibe—for trendy shops, galleries, and street art. Dinner’s not ‘til late here, so grab an aperitivo in Prati—it’s walkable from the Vatican and packed with quirky sidestreet bars.Yes, the energy’s next-level, so if you need a break, head for the hills (literally) and check out Aventine Hill, a leafy-green suburb with peaceful gardens and some of the best views of the city. There’s always something to do', imageUrl: 'https://images.pexels.com/photos/532263/pexels-photo-532263.jpeg'}, 
     {id: 'd2', name: 'Paris', country: 'France', description: 'Paris has a reputation for being the ultimate romantic getaway. But what visitors really swoon over is the city itself. Those grand stone and wrought-iron buildings, the sidewalks brimming with cozy cafés, and the Seine’s curving riverbanks are downright cinematic. But the city’s charms go beyond looks. The culinary scene creates an endless list of must-eat French dishes—rich and hearty coq au vin, golden buttery croissants. It’s also worth trying modern fusion and inventive international food here. (Trust us, the city’s falafel is outstanding.) And the spirit of Paris invites ducking down side streets, lingering in museums, and exploring mazes of shops. At the end of the day, head to the Champ-de-Mars to get uninterrupted views of the Eiffel Tower as it glitters into the night.', imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34'},
@@ -19,8 +29,68 @@ export class DestinationService {
     {id: 'd10', name: 'Budapest', country: 'Hungary', description: 'Budapest is a city of duality, split by the Danube into historic Buda and vibrant Pest. The Parliament building and Chain Bridge dazzle by day, but the city truly shines at night when monuments are lit against the river. Thermal baths like Széchenyi and Gellért offer relaxation in grand surroundings, while ruin pubs hidden in old courtyards bring a bohemian nightlife scene. From hilltop views at the Fisherman’s Bastion to lively markets, Budapest mixes old-world charm with youthful energy.', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Budapest_Parliament.JPG'}
 
   ];
+*/
+  constructor(private http: HttpClient){ }
+
+  get destination() {
+    return this._destination.asObservable();
+  }
+
+  addDestination(name:string,country:string, description: string){
+    let generatedId: string;
+
+    return this.http.post<{name: string}>('https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json', {
+      name, 
+      country, 
+      description
+    }).pipe(
+        switchMap((resData) => {
+        generatedId = resData.name;
+        return this.destination;
+      }), 
+      take(1), 
+      tap((destinations: DestinationModel[]) => {
+        this._destination.next(destinations.concat({
+          id: generatedId,
+          name,
+          country,
+          description,
+          imageUrl: ''
+        }));
+    }));
+  }
+
+  getDestinations(){
+    return this.http.get<{[key: string]: DestinationData}>('https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json')
+    .pipe(map((destinationData) => {
+      const destinations: DestinationModel[] = [];
+
+        for(const key in destinationData){
+          if(destinationData.hasOwnProperty(key)){
+            destinations.push({
+              id: key,
+              name: destinationData[key].name,
+              country: destinationData[key].country,
+              description: destinationData[key].description,
+              imageUrl: 'https://images.pexels.com/photos/532263/pexels-photo-532263.jpeg'
+            });
+          }
+        }
+        return destinations;
+    }),
+    tap(destinations => {
+      this._destination.next(destinations);
+    })
+  );
+  }
 
   getDestination(id: string) {
-    return this.destination.find((d: DestinationModel) => d.id === id);
+    return this.destination.pipe(
+      take(1),
+      map((destinations) => {
+        return destinations.find(d => d.id === id);
+      })
+    );
   }
+
 }

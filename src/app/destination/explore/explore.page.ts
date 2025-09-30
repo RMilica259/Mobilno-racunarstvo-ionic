@@ -3,6 +3,9 @@ import { DestinationModel } from '../destination.model';
 import { DestinationService } from '../destination';
 import { ModalController } from '@ionic/angular';
 import { DestinationModalComponent } from '../destination-modal/destination-modal.component';
+import { DestinationData } from '../destination';
+import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-explore',
@@ -12,11 +15,18 @@ import { DestinationModalComponent } from '../destination-modal/destination-moda
 })
 export class ExplorePage implements OnInit, OnDestroy {
 
-  destination: DestinationModel[];
+  destination: DestinationModel[] = [];
+  private destSub!: Subscription;
 
   constructor(private destinationService: DestinationService, private modalCtrl: ModalController) { 
     console.log('constructor');
-    this.destination = this.destinationService.destination;
+    //this.destination = this.destinationService.destination;
+  }
+
+  ngOnInit() {
+      this.destSub = this.destinationService.destination.subscribe((destinations) => {
+      this.destination = destinations;
+    });
   }
 
   openModal(){
@@ -28,16 +38,13 @@ export class ExplorePage implements OnInit, OnDestroy {
     }).then((resultData) => {
       if(resultData.role == 'confirm') {
         console.log(resultData);
+        this.destinationService.addDestination(resultData.data.destinationData.name, resultData.data.destinationData.country, resultData.data.destinationData.description).subscribe();
       }
     });
   }
 
-  ngOnInit() {
-    console.log('ngOnInit');
-  }
-
   ionViewWillEnter(){
-    console.log('ionViewWillEnter');
+    this.destinationService.getDestinations().subscribe();
   }
 
   ionViewDidEnter(){
@@ -52,8 +59,10 @@ export class ExplorePage implements OnInit, OnDestroy {
     console.log('ionViewDidLeave');
   }
 
-  ngOnDestroy(): void {
-    console.log('ngOnDestroy');
+  ngOnDestroy() {
+    if(this.destSub){
+      this.destSub.unsubscribe();
+    }
   }
 
 }

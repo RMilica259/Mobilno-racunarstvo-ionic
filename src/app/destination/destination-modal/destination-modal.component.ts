@@ -24,7 +24,7 @@ export class DestinationModalComponent  implements OnInit {
     this.modalCtrl.dismiss({
       destinationData: 
         {
-          city: this.form.value['city'], 
+          name: this.form.value['name'], 
           country: this.form.value['country'], 
           description: this.form.value['description']
         }
