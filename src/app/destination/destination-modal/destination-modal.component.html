@@ -1,6 +1,8 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Add destination</ion-title>
+    <ion-title>
+      {{ destination ? 'Edit Destination' : 'Add Destination' }}
+    </ion-title>
     <ion-buttons slot="primary">
       <ion-fab-button size="small" (click)="onCancel()">
         <ion-icon name="close"></ion-icon>
@@ -10,14 +12,20 @@
 </ion-header>
 
 <ion-content>
-  <form #f="ngForm" (ngSubmit)="onAddDestination()">
+  <form #f="ngForm" (ngSubmit)="onSaveDestination()">
     <ion-grid>
 
       <ion-row>
         <ion-col size-sm="6" offset-sm="3">
           <ion-item>
             <ion-label position="stacked">Destination</ion-label>
-            <ion-input type="text" ngModel name="name" required></ion-input>
+            <ion-input
+              type="text"
+              name="name"
+              ngModel
+              [ngModel]="destination?.name"
+              required>
+            </ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -26,7 +34,13 @@
         <ion-col size-sm="6" offset-sm="3">
           <ion-item>
             <ion-label position="stacked">Country</ion-label>
-            <ion-input type="text" ngModel name="country" required></ion-input>
+            <ion-input
+              type="text"
+              name="country"
+              ngModel
+              [ngModel]="destination?.country"
+              required>
+            </ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -35,16 +49,27 @@
         <ion-col size-sm="6" offset-sm="3">
           <ion-item>
             <ion-label position="stacked">Description</ion-label>
-            <ion-textarea type="text" rows="6" ngModel name="description" required></ion-textarea>
+            <ion-textarea
+              name="description"
+              ngModel
+              [ngModel]="destination?.description"
+              rows="10"
+              required>
+            </ion-textarea>
           </ion-item>
         </ion-col>
       </ion-row>
 
       <ion-row>
         <ion-col size-sm="6" offset-sm="3">
-          <ion-button type="submit" color="primary" expand="block" [disabled]="f.invalid">
-            Add
-          </ion-button>
+          <ion-button
+            type="submit"
+            color="primary"
+            expand="block"
+            [disabled]="f.invalid">
+          {{ destination ? 'Update' : 'Add' }}
+        </ion-button>
+
         </ion-col>
       </ion-row>
 

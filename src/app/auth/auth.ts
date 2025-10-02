@@ -68,6 +68,11 @@ export class AuthService {
     ); 
   }
 
+  get user() {
+  return this._user.asObservable();
+}
+
+
   register(user: UserData){
     this._isUserAuthenticated = true;
     return this.http.post<AuthResponseData>(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseApiKey}`,

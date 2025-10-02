@@ -1,6 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DestinationModel } from '../destination.model';
 import { AlertController } from '@ionic/angular';
+import { SavedService } from '../saved/saved';
+import { ToastController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-destination-element',
@@ -8,36 +11,56 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./destination-element.component.scss'],
   standalone: false
 })
-export class DestinationElementComponent  implements OnInit {
+export class DestinationElementComponent implements OnInit {
+  @Input() dest!: DestinationModel;
+  isSaved = false;
 
-  @Input() dest: DestinationModel = {id: 'd3', name: 'Barcelona', country: 'Spain', description: 'Barcelona is a major cultural, economic, and financial centre in southwestern Europe, as well as the main biotech hub in Spain.', imageUrl: '', userId: 'xx'};
+  constructor(
+  private alertCtrl: AlertController,
+  private savedService: SavedService,
+  private toastCtrl: ToastController
+) {}
 
-  constructor(private alertCtrl: AlertController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.isSaved = this.savedService.isSaved(this.dest.id!);
 
-  openAlert(){
-    this.alertCtrl.create({
-      header: 'Saving destination',
-      message: 'Are you sure you want to save this destination?',
-      buttons: [
-        {
-          text:'Save',
-          handler: () => {
-            console.log('Save it!');
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Do not save it!');
-          }
-        }
-      ]
-    }).then((alert: HTMLIonAlertElement) =>{
-      alert.present();
+    
+    this.savedService.saved$.subscribe(() => {
+      this.isSaved = this.savedService.isSaved(this.dest.id!);
     });
   }
 
+  private async presentToast(message: string) {
+  const toast = await this.toastCtrl.create({
+    message,
+    duration: 2000,
+    color: 'success',
+    position: 'bottom'
+  });
+  await toast.present();
+}
+
+
+  openAlert() {
+    this.alertCtrl
+      .create({
+        header: 'Saving destination',
+        message: 'Are you sure you want to save this destination?',
+        buttons: [
+          {
+            text: 'Save',
+            handler: () => {
+              this.savedService.addDestination(this.dest);
+              this.presentToast('Destination saved ✅');
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          }
+        ]
+      })
+      .then(alert => alert.present());
+  }
 }

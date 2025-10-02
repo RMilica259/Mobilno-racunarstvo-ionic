@@ -58,7 +58,7 @@ export class DestinationService {
         name,
         country,
         description,
-        '',
+        'https://images.pexels.com/photos/912050/pexels-photo-912050.jpeg',
         fetchedUserId
       );
       return this.http.post<{name: string}>(`https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination.json?auth=${token}`, newDestination);
@@ -88,7 +88,7 @@ export class DestinationService {
 
         for(const key in destinationData){
           if(destinationData.hasOwnProperty(key)){
-            destinations.push(new DestinationModel(key, destinationData[key].name, destinationData[key].country, destinationData[key].description, destinationData[key].userId, destinationData[key].imageUrl)
+            destinations.push(new DestinationModel(key, destinationData[key].name, destinationData[key].country, destinationData[key].description, destinationData[key].imageUrl, destinationData[key].userId)
               );
           }
         }
@@ -100,13 +100,85 @@ export class DestinationService {
     )
   }
 
+  updateDestination(
+  id: string,
+  name: string,
+  country: string,
+  description: string,
+  imageUrl: string,
+  userId: string
+) {
+  return this.authService.token.pipe(
+    take(1),
+    switchMap(token => {
+      if (!token) throw new Error('No token found');
+      return this.http.put(
+        `https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination/${id}.json?auth=${token}`,
+        { name, country, description, imageUrl, userId }  // ✅ šalješ sve
+      );
+    }),
+    tap(() => {
+      this._destination.pipe(take(1)).subscribe(destinations => {
+        const updatedDestIndex = destinations.findIndex(d => d.id === id);
+        const updatedDest = {
+          ...destinations[updatedDestIndex],
+          name,
+          country,
+          description,
+          imageUrl,
+          userId
+        };
+        const updatedDestinations = [...destinations];
+        updatedDestinations[updatedDestIndex] = updatedDest;
+        this._destination.next(updatedDestinations);
+      });
+    })
+  );
+}
+
+
+
+  deleteDestination(id: string) {
+  return this.authService.token.pipe(
+    take(1),
+    switchMap(token => {
+      if (!token) throw new Error('No token found');
+      return this.http.delete(
+        `https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination/${id}.json?auth=${token}`
+      );
+    }),
+    tap(() => {
+      this._destination.pipe(take(1)).subscribe(destinations => {
+        this._destination.next(destinations.filter(d => d.id !== id));
+      });
+    })
+  );
+}
+
+
   getDestination(id: string) {
-    return this.destination.pipe(
-      take(1),
-      map((destinations) => {
-        return destinations.find(d => d.id === id);
-      })
-    );
-  }
+  return this.authService.token.pipe(
+    take(1),
+    switchMap(token => {
+      if (!token) throw new Error('No token found');
+      return this.http.get<DestinationData>(
+        `https://ionic-app-mm-default-rtdb.europe-west1.firebasedatabase.app/destination/${id}.json?auth=${token}`
+      );
+    }),
+    map(destData => {
+      if (!destData) {
+        throw new Error('Destination not found!');
+      }
+      return new DestinationModel(
+        id,
+        destData.name,
+        destData.country,
+        destData.description,
+        destData.imageUrl,
+        destData.userId
+      );
+    })
+  );
+}
 
 }

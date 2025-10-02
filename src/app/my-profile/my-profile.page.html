@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/destination/tabs/explore"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="user" class="profile-content">
+  <div class="profile-wrapper">
+    <div class="profile-card">
+      <ion-avatar class="profile-avatar">
+        <ion-img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"></ion-img>
+      </ion-avatar>
+
+      <h2 color="secondary">{{ user.email }}</h2>
+      <p color="secondary">User ID: {{ user.id }}</p>
+    </div>
+  </div>
+</ion-content>

@@ -2,9 +2,15 @@
   <ion-avatar slot="start" [routerLink]="['/', 'destination', 'tabs', 'explore', dest.id]">
     <ion-img [src]="dest.imageUrl"></ion-img>
   </ion-avatar>
+
   <ion-label [routerLink]="['/', 'destination', 'tabs', 'explore', dest.id]">
     <h2>{{ dest.name }}</h2>
     <p>{{ dest.country }}</p>
   </ion-label>
-  <ion-icon name="bookmark-outline" slot="end" (click)="openAlert()"></ion-icon>
+
+  <ion-buttons slot="end" class="action-buttons">
+    <ion-button fill="clear" (click)="openAlert()" [disabled]="isSaved">
+      <ion-icon [name]="isSaved ? 'bookmark' : 'bookmark-outline'"></ion-icon>
+    </ion-button>
+  </ion-buttons>
 </ion-item>

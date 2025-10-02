@@ -3,11 +3,27 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    
     <ion-title>Saved</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  
+  <ion-list>
+    <ion-item *ngFor="let dest of saved" class="destination-item">
+      <ion-thumbnail slot="start">
+        <img [src]="dest.imageUrl" alt="{{dest.name}}">
+      </ion-thumbnail>
+
+      <ion-label>
+        <h2>{{ dest.name }}</h2>
+        <p>{{ dest.country }}</p>
+      </ion-label>
+
+      <ion-buttons slot="end">
+        <ion-button fill="clear" (click)="remove(dest.id!)">
+          <ion-icon name="trash-outline" color="primary"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
 </ion-content>

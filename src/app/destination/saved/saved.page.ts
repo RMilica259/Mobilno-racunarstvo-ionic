@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { SavedService } from './saved';
+import { DestinationModel } from '../destination.model';
+import { ToastController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-saved',
@@ -7,10 +11,31 @@ import { Component, OnInit } from '@angular/core';
   standalone: false
 })
 export class SavedPage implements OnInit {
+  saved: DestinationModel[] = [];
 
-  constructor() { }
+  constructor(private savedService: SavedService, private toastCtrl: ToastController) {}
+
+
+  private async presentToast(message: string) {
+  const toast = await this.toastCtrl.create({
+    message,
+    duration: 2000,
+    color: 'success',   
+    position: 'bottom'
+  });
+  await toast.present();
+}
+
+
+  remove(id: string) {
+  this.savedService.removeDestination(id);
+  this.presentToast('Destination removed ❌');
+}
+
 
   ngOnInit() {
+    this.savedService.saved$.subscribe(destinations => {
+      this.saved = destinations;
+    });
   }
-
 }

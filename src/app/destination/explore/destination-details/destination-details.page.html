@@ -1,18 +1,27 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar *ngIf="dest">
 
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/destination/tabs/explore"></ion-back-button>
     </ion-buttons>
-    <ion-title>Destination details</ion-title>
+    <ion-title>{{dest.name}}</ion-title>
+    
+    <ion-buttons slot="end">
+      <ion-fab-button size="small">
+        <ion-icon name="create-outline" (click)="openEditModal()"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button size="small">
+        <ion-icon name="trash-outline" (click)="deleteDestination()"></ion-icon>
+      </ion-fab-button>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="dest">
   <ion-card class="ion-padding" color="primary">
     <img [src]="dest.imageUrl">
     <ion-card-header>
-      <ion-card-title>{{dest.name}}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       {{dest.description}}

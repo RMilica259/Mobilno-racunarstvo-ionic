@@ -35,7 +35,7 @@ export class RegisterPage implements OnInit {
           console.log('Registracija uspela');
           console.log(resData);
           loadingEl.dismiss();
-          this.router.navigateByUrl('/destination');
+          this.router.navigateByUrl('/log-in');
         });
     });
   }
